@@ -4,8 +4,11 @@ import { ScrollView, Text, View } from "react-native";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
 import { useState } from "react";
+import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 
 export default function App() {
+  const [selectedTabName, setSelectedTabName] = useState("all");
+
   const [todoList, setTodoList] = useState([
     { id: 1, title: "Premiere todo", isCompleted: false },
     { id: 2, title: "Seconde todo", isCompleted: false },
@@ -48,7 +51,10 @@ export default function App() {
         </SafeAreaView>
       </SafeAreaProvider>
       <View style={s.footer}>
-        <Text>Footer</Text>
+        <TabBottomMenu
+          selectedTabName={selectedTabName}
+          onPress={setSelectedTabName}
+        />
       </View>
     </>
   );
