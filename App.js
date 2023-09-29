@@ -5,17 +5,15 @@ import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
 import { useState } from "react";
 import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
+import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
+import Dialog from "react-native-dialog";
+import uuid from "react-native-uuid";
 
 export default function App() {
   const [selectedTabName, setSelectedTabName] = useState("all");
-
-  const [todoList, setTodoList] = useState([
-    { id: 1, title: "Premiere todo", isCompleted: false },
-    { id: 2, title: "Seconde todo", isCompleted: false },
-    { id: 3, title: "Troisieme todo", isCompleted: true },
-    { id: 4, title: "todo numero 4", isCompleted: true },
-    { id: 5, title: "et pour finir", isCompleted: false },
-  ]);
+  const [todoList, setTodoList] = useState([]);
+  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   function getFilteredList() {
     switch (selectedTabName) {
@@ -67,6 +65,21 @@ export default function App() {
     ));
   }
 
+  function showAddDialog() {
+    setIsAddDialogVisible(true);
+  }
+
+  function addTodo() {
+    const newTodo = {
+      id: uuid.v4(),
+      title: inputValue,
+      isCompleted: false,
+    };
+
+    setTodoList([...todoList, newTodo]);
+    setIsAddDialogVisible(false);
+  }
+
   return (
     <>
       <SafeAreaProvider>
@@ -84,6 +97,22 @@ export default function App() {
           todoList={todoList}
         />
       </View>
+      <ButtonAdd onPress={showAddDialog} />
+      <Dialog.Container
+        visible={isAddDialogVisible}
+        onBackdropPress={() => setIsAddDialogVisible(false)}
+      >
+        <Dialog.Title>Crée une tâche</Dialog.Title>
+        <Dialog.Description>
+          Choisi un nom pour lanouvelle tâche
+        </Dialog.Description>
+        <Dialog.Input onChangeText={setInputValue} />
+        <Dialog.Button
+          disabled={inputValue.trim() === 0}
+          label="Créer"
+          onPress={addTodo}
+        />
+      </Dialog.Container>
     </>
   );
 }
