@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const s = StyleSheet.create({
   app: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 10,
     backgroundColor: "#f9f9f9",
   },
   header: {
@@ -17,6 +17,8 @@ export const s = StyleSheet.create({
     height: 50,
   },
   cardItem: {
+    marginTop: 5,
     marginBottom: 20,
+    marginHorizontal: 5
   },
 });
