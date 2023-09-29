@@ -14,10 +14,25 @@ export default function App() {
     { id: 5, title: "et pour finir", isCompleted: false },
   ]);
 
+  function updateTodo(todo) {
+    const updateTodo = {
+      ...todo,
+      isCompleted: !todo.isCompleted,
+    };
+
+    const indexToUpdate = todoList.findIndex(
+      (todo) => todo.id === updateTodo.id
+    );
+
+    const updatedTodoList = [...todoList];
+    updatedTodoList[indexToUpdate] = updateTodo;
+    setTodoList(updatedTodoList);
+  }
+
   function renderTodoList() {
     return todoList.map((todo) => (
       <View style={s.cardItem} key={s.id}>
-        <CardTodo todo={todo} />
+        <CardTodo onPress={updateTodo} todo={todo} />
       </View>
     ));
   }
