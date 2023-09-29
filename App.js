@@ -3,17 +3,57 @@ import { s } from "./App.style";
 import { Alert, ScrollView, Text, View } from "react-native";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
 import Dialog from "react-native-dialog";
 import uuid from "react-native-uuid";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+let isFirstRender = true;
+let isLoadUpdate = false;
 export default function App() {
   const [selectedTabName, setSelectedTabName] = useState("all");
   const [todoList, setTodoList] = useState([]);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    loadTodoList();
+  }, []);
+
+  useEffect(() => {
+    if (isLoadUpdate) {
+      isLoadUpdate = false;
+    } else {
+      if (!isFirstRender) {
+        saveTodoList();
+      } else {
+        isFirstRender = false;
+      }
+    }
+  }, [todoList]);
+
+  async function saveTodoList() {
+    try {
+      await AsyncStorage.setItem("@todolist", JSON.stringify(todoList));
+    } catch (error) {
+      alert("Erreur " + error);
+    }
+  }
+
+  async function loadTodoList() {
+    try {
+      const stringifiedTodoList = await AsyncStorage.getItem("@todolist");
+      if (stringifiedTodoList !== null) {
+        const parsedTodoList = JSON.parse(stringifiedTodoList);
+        isLoadUpdate = true;
+        setTodoList(parsedTodoList);
+      }
+    } catch (error) {
+      alert("Erreur " + error);
+    }
+  }
 
   function getFilteredList() {
     switch (selectedTabName) {
@@ -104,7 +144,7 @@ export default function App() {
       >
         <Dialog.Title>Crée une tâche</Dialog.Title>
         <Dialog.Description>
-          Choisi un nom pour lanouvelle tâche
+          Choisi un nom pour la nouvelle tâche
         </Dialog.Description>
         <Dialog.Input onChangeText={setInputValue} />
         <Dialog.Button
